@@ -5,11 +5,15 @@ import random
 
 # scores for various concerns for each day
 DateScores = Tuple[str, Dict[str, List[int]]]
+itr = 0
 
-
-def get_cur_date() -> str:
+def get_cur_date(change_itr: bool = False) -> str:
+    global itr
     now = datetime.datetime.now()
-    date_string = now.strftime("%Y-%m-%d")
+    next_date = now + datetime.timedelta(days=itr)
+    if change_itr:
+        itr = itr + 1
+    date_string = next_date.strftime("%Y-%m-%d")
     return date_string
 
 

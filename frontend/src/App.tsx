@@ -27,13 +27,13 @@ interface CategoryOnADateInfo {
 }
 
 function getCurrentDateRecords(apiData: ApiResponse): CategoryOnADateInfo[] {
-  let names = apiData.categoryNames;
-  let scores = apiData.categoryScores;
-  let labels = apiData.categoryLabels;
+  const names = apiData.categoryNames;
+  const scores = apiData.categoryScores;
+  const labels = apiData.categoryLabels;
   
-  let dateRecords: CategoryOnADateInfo[] = [];
-  for (let i = 0; i < names.length; i++) {
-    let record: CategoryOnADateInfo = {
+  const dateRecords: CategoryOnADateInfo[] = [];
+  for (let i = 0; i < names?.length; i++) {
+    const record: CategoryOnADateInfo = {
       category: names[i],
       score: scores[i],
       label: labels[i],
@@ -52,16 +52,21 @@ function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADate
   }
 
   const numPlots: number = datesRecords.get(sample_date)?.length || 0;
-  let plots: Plot[] = [];
+  const plots: Plot[] = [];
+
+  // console.log(numPlots);
   
   // Create a plot for each category
   for (let i = 0; i < numPlots; i++) {
-    let plot: Plot = {
+    const plot: Plot = {
       category: "",
       items: []
     };
+
+    // console.log(datesRecords.entries())
     
     // For each date, get the score and label for this category index
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_date, categories] of datesRecords.entries()) {
       if (i === 0) {
         plot.category = categories[i].category;
@@ -89,12 +94,13 @@ const App: React.FC = () => {
     try {
       const apiData = await fetchApiData(input);
       setData((prevData) => [...prevData, { inputText: input, response: apiData }]);
-      console.log(input);
+      // console.log(input);
       
-      let curDate: string = apiData.currentDate;
+      const curDate: string = apiData.currentDate;
       setSampleDate(() => curDate);
       
-      let curDateRecords = getCurrentDateRecords(apiData);
+      const curDateRecords = getCurrentDateRecords(apiData);
+      // console.log(curDateRecords)
       setDatesRecords(new Map([
         ...datesRecords,
         [curDate, curDateRecords]
@@ -105,10 +111,11 @@ const App: React.FC = () => {
   };
 
   const dates = Array.from(datesRecords.keys());
+  // console.log(sampleDate)
   const plots = getPlots(sampleDate, datesRecords);
-  console.log("hi");
-  console.log(dates);
-  console.log(plots);
+  // console.log("hi");
+  // console.log(dates);
+  // console.log(plots);
 
   return (
     <div className="app-container">

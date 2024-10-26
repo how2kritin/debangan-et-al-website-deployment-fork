@@ -91,15 +91,17 @@ def process_data(input_text: str):
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
+    currentDate = utils.get_cur_date(change_itr=True)
 
-    # print(concernNames, cur_day_phq_scores, cur_day_concern_labels)
+    print(concernNames, cur_day_phq_scores, cur_day_concern_labels)
 
     return {
         "polarity": polarity,
         "features": features,
         "concerns": concerns,
         "score": score,
-        "concernNames": concernNames,
-        "concernScores": cur_day_phq_scores,
-        "concernLabels": cur_day_concern_labels
+        "currentDate": currentDate,
+        "categoryNames": concernNames,
+        "categoryScores": cur_day_phq_scores,
+        "categoryLabels": cur_day_concern_labels
     }
