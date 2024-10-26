@@ -1,17 +1,19 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+import bitsandbytes as bnb  # for 8-bit quantization
+
 
 def extract_concerns(input_text: str) -> list[str]:
     model = AutoModelForCausalLM.from_pretrained(
         "microsoft/Phi-3.5-mini-instruct",
-        device_map="cuda",
+        load_in_8bit=True,
+        device_map="auto",
         torch_dtype="auto",
         trust_remote_code=True,
     )
     tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3.5-mini-instruct")
 
-    messages = [
-        {"role": "system", "content": """
-        Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
+    prompt = f"""
+    Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
     Input: 'I can't sleep well and I feel very low.'
     Output: 'can't sleep well', 'feel very low'
     Input: 'Lately, I've been happy and excited.'
@@ -20,11 +22,12 @@ def extract_concerns(input_text: str) -> list[str]:
     Output: 'worried'
     Input: 'These past few days, I’ve been feeling confused about job prospects.'
     Output: "confused about job prospects"
-    
+
     DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
-        """},
-        {"role": "user", "content": input_text},
-    ]
+
+    Input: '{input_text}'
+    Output:
+    """
 
     pipe = pipeline(
         "text-generation",
@@ -33,15 +36,16 @@ def extract_concerns(input_text: str) -> list[str]:
     )
 
     generation_args = {
-        "max_new_tokens": 500,
+        "max_new_tokens": 50,  # reduced max tokens for shorter output
         "return_full_text": False,
         "temperature": 0.0,
         "do_sample": False,
     }
 
-    output = pipe(messages, **generation_args)
-    output = output[0]['generated_text'].split('\n')
-    return output
+    output = pipe(prompt, **generation_args)
+
+    output_phrases = output[0]['generated_text'].strip().split('\n')
+    return output_phrases
 
 
 def extract_concerns_inference_API(input_text: str) -> list[str]:
@@ -85,5 +89,5 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
 
 if __name__ == "__main__":
     text = "Samyak's mother is worrying him and his father."
-    # print(extract_concerns(text))
-    print(extract_concerns_inference_API(text))
+    print(extract_concerns(text))
+    # print(extract_concerns_inference_API(text))
