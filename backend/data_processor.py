@@ -6,9 +6,9 @@ import utils
 
 # TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
-DATE_SCORES_SIZES = [9]
-DATE_SCORES_LABELS = ["Depression"]
-CONCERN_REANGES = [4]
+DATE_SCORES_SIZES = [9, 7]
+DATE_SCORES_LABELS = ["Depression", "Anxiety"]
+CONCERN_REANGES = [4, 4]
 
 
 def add_scores(a: List[int], b: List[int]):

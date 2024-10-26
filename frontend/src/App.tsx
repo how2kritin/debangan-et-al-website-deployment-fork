@@ -26,7 +26,7 @@ interface CategoryOnADateInfo {
   label: string;
 }
 
-function getCurrentDateRecords(apiData: ApiResponse) : CategoryOnADateInfo[] {
+function getCurrentDateRecords(apiData: ApiResponse): CategoryOnADateInfo[] {
   let names = apiData.categoryNames;
   let scores = apiData.categoryScores;
   let labels = apiData.categoryLabels;
@@ -47,19 +47,33 @@ function getCurrentDateRecords(apiData: ApiResponse) : CategoryOnADateInfo[] {
 
 
 function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADateInfo[]>): Plot[] {
-  const numPlots: number = datesRecords.get(sample_date)?.length;
+  if (!datesRecords.get(sample_date)) {
+    return [];
+  }
+
+  const numPlots: number = datesRecords.get(sample_date)?.length || 0;
   let plots: Plot[] = [];
   
+  // Create a plot for each category
   for (let i = 0; i < numPlots; i++) {
-    let category = "";
-    let items: PlotItem[] = [];
+    let plot: Plot = {
+      category: "",
+      items: []
+    };
+    
+    // For each date, get the score and label for this category index
     for (const [_date, categories] of datesRecords.entries()) {
-      category = categories[i].category;
-      items.push({
+      if (i === 0) {
+        plot.category = categories[i].category;
+      }
+      
+      plot.items.push({
         score: categories[i].score,
         label: categories[i].label,
       });
     }
+    
+    plots.push(plot);
   }
 
   return plots;
@@ -75,12 +89,14 @@ const App: React.FC = () => {
     try {
       const apiData = await fetchApiData(input);
       setData((prevData) => [...prevData, { inputText: input, response: apiData }]);
+      console.log(input);
       
       let curDate: string = apiData.currentDate;
       setSampleDate(() => curDate);
+      
       let curDateRecords = getCurrentDateRecords(apiData);
-      setDatesRecords(() => new Map([
-        ...Array.from(datesRecords.entries()),
+      setDatesRecords(new Map([
+        ...datesRecords,
         [curDate, curDateRecords]
       ]));
     } catch (error) {
@@ -88,10 +104,11 @@ const App: React.FC = () => {
     }
   };
 
-
-  let dates = Array.from(datesRecords.keys());
-  let plots = getPlots(sampleDate, datesRecords);
-  
+  const dates = Array.from(datesRecords.keys());
+  const plots = getPlots(sampleDate, datesRecords);
+  console.log("hi");
+  console.log(dates);
+  console.log(plots);
 
   return (
     <div className="app-container">
