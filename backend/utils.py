@@ -13,7 +13,7 @@ def get_cur_date() -> str:
     return date_string
 
 
-def get_random_date_scores(date_string: str, sizes: List[int], labels: List[str]) -> Dict[str, List[int]]:
+def get_random_date_scores(date_string: str, sizes: List[int], labels: List[str]) -> DateScores:
     # Create the second field of the DateScores object (the dictionary)
     scores_dict: Dict[str, List[int]] = {
         label: [random.choice([0, 1]) for _ in range(size)]
@@ -58,7 +58,8 @@ def read_last_entries(file_path: str, count: int) -> List[DateScores]:
             except EOFError:
                 break
     
-    return entries[-count:] if len(entries) >= count else entries
+    entries = entries[-count:] if len(entries) >= count else entries
+    return entries
 
 
 def is_cur_date_in_file(file_path: str):

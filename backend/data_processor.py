@@ -5,7 +5,7 @@ from typing import List, Dict
 import utils
 
 # TODO: ADD FOR OTHER CONCERNS
-JSONFILE = "./scores.json"
+JSONFILE = "./scores.pkl"
 DATE_SCORES_SIZES = [9]
 DATE_SCORES_LABELS = ["Depression"]
 CONCERN_REANGES = [4]
@@ -17,8 +17,9 @@ def add_scores(a: List[int], b: List[int]):
 
 def get_cur_day_scores():
     def accumulate_scores(scores_list: List[utils.DateScores]) -> utils.DateScores:
-        aggregate: utils.DateScores = (scores_list[-1], scores_list[-1])
-        for date_score in scores_list[:-1]:
+        aggregate: utils.DateScores = scores_list[-1]
+
+        for date_score in scores_list[: -1]:
             for key in aggregate[1]:
                 aggregate[1][key] = add_scores(aggregate[1][key], date_score[1][key])
 
@@ -41,18 +42,18 @@ def update_cur_day_scores(scores_to_add: utils.DateScores) -> utils.DateScores:
 
 def calculate_phq_scores(week_scores: List[utils.DateScores], concern_ranges: List[int]):
     num_cols = {concern: len(week_scores[0][1][concern]) for concern in week_scores[0][1]}
-    scores = {key: [0 for _ in range(num_cols[concern])] for key in num_cols}
+    scores = {key: [0 for _ in range(num_cols[key])] for key in num_cols}
 
-    for day in range(7):
+    for day in range(len(week_scores)):
         for concern in num_cols:
             for col in range(num_cols[concern]):
-                scores[concern][col] += week_scores[day][concern][col]
+                scores[concern][col] += week_scores[day][1][concern][col]
     
     # changing score from list to int
     i = 0
     concern_score: Dict[str, int] = {key: 0 for key in num_cols}
     for concern in scores:
-        for col in range(num_cols([concern])):
+        for col in range(num_cols[concern]):
             concern_score[concern] += math.floor(scores[concern][col] * concern_ranges[i] / 7.1)
         i += 1
     
@@ -64,8 +65,7 @@ def get_cur_day_phq_scores(input_text: str):
     
     cur_date = utils.get_cur_date()
     # TODO: plug in model outputs here when done
-    change_in_state = utils.get_random_date_scores(cur_date, DATE_SCORES_SIZES, DATE_SCORES_LABELS)
-    todays_scores: utils.DateScores = (cur_date, change_in_state)
+    todays_scores = utils.get_random_date_scores(cur_date, DATE_SCORES_SIZES, DATE_SCORES_LABELS)
 
     # update cur date in file
     if utils.is_cur_date_in_file(JSONFILE):
@@ -73,13 +73,13 @@ def get_cur_day_phq_scores(input_text: str):
     else:
         utils.append_to_file(JSONFILE, [todays_scores])
     
-    scores = calculate_phq_scores(utils.read_last_entries(7), CONCERN_REANGES)
+    scores = calculate_phq_scores(utils.read_last_entries(JSONFILE, 7), CONCERN_REANGES)
     return list(scores.keys()), list(scores.values())
 
 
-def get_cur_day_concern_labels(scores: Dict[str, int]):
+def get_cur_day_concern_labels(scores: list[int]):
     # TODO: write actual shite
-    return [key for key in scores]
+    return [str(key) for key in scores]
     
 
 
@@ -91,6 +91,8 @@ def process_data(input_text: str):
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
+
+    # print(concernNames, cur_day_phq_scores, cur_day_concern_labels)
 
     return {
         "polarity": polarity,
