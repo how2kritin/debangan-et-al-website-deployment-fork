@@ -54,7 +54,7 @@ def extract_concerns(input_text: str) -> List[str]:
     generation_args = {
         "max_new_tokens": 500,
         "return_full_text": False,
-        "temperature": 0.0,
+        "temperature": 0.5,
         "do_sample": False,
         "pad_token_id": tokenizer.pad_token_id,
         "num_beams": 1,
