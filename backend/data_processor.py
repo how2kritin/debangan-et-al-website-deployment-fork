@@ -4,7 +4,7 @@ from typing import List, Dict
 
 import utils
 
-
+# TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.json"
 DATE_SCORES_SIZES = [9]
 DATE_SCORES_LABELS = ["Depression"]
@@ -87,18 +87,15 @@ def process_data(input_text: str):
     features = f"Features of {input_text}"
     concerns = f"Concerns about {input_text}"
     score = round(random.uniform(0, 10), 2)
+
     cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
 
-    # TODO: send scores and labels instead
-    cur_date = utils.get_cur_date()
-    change_in_state = utils.get_random_date_scores(cur_date, DATE_SCORES_SIZES, DATE_SCORES_LABELS)
-
-    
     return {
         "polarity": polarity,
         "features": features,
         "concerns": concerns,
         "score": score,
-        "changeInState": change_in_state
+        "concernScores": cur_day_phq_scores,
+        "concernLabels": cur_day_concern_labels
     }
