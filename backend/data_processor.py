@@ -73,12 +73,13 @@ def get_cur_day_phq_scores(input_text: str):
     else:
         utils.append_to_file(JSONFILE, [todays_scores])
     
-    return calculate_phq_scores(utils.read_last_entries(7), CONCERN_REANGES)
+    scores = calculate_phq_scores(utils.read_last_entries(7), CONCERN_REANGES)
+    return list(scores.keys()), list(scores.values())
 
 
 def get_cur_day_concern_labels(scores: Dict[str, int]):
     # TODO: write actual shite
-    return {key: key for key in scores}
+    return [key for key in scores]
     
 
 
@@ -88,7 +89,7 @@ def process_data(input_text: str):
     concerns = f"Concerns about {input_text}"
     score = round(random.uniform(0, 10), 2)
 
-    cur_day_phq_scores = get_cur_day_phq_scores(input_text)
+    concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
 
     return {
@@ -96,6 +97,7 @@ def process_data(input_text: str):
         "features": features,
         "concerns": concerns,
         "score": score,
+        "concernNames": concernNames,
         "concernScores": cur_day_phq_scores,
         "concernLabels": cur_day_concern_labels
     }
