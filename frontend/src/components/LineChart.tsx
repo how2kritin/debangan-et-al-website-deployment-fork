@@ -17,7 +17,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
         label: 'Change in State',
         data: data.map((item) => item.changeInState),
         borderColor: 'rgb(75, 192, 192)',
-        tension: 0.2,
+        tension: 0, // Straight lines
       },
     ],
   };
