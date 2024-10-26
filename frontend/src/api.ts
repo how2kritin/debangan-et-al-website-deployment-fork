@@ -9,6 +9,6 @@ export interface ApiResponse {
 }
 
 export async function fetchApiData(input: string): Promise<ApiResponse> {
-  const response = await axios.post<ApiResponse>('YOUR_API_ENDPOINT', { input });
+  const response = await axios.post<ApiResponse>('http://127.0.0.1:5000/api/process', { input });
   return response.data;
 }
