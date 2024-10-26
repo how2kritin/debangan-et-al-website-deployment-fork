@@ -1,51 +1,84 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-import bitsandbytes as bnb  # for 8-bit quantization
+import torch
+from typing import List
 
+def extract_concerns(input_text: str) -> List[str]:
+    bnb_config = {
+        "load_in_4bit": True,
+        "bnb_4bit_quant_type": "nf4",
+        "bnb_4bit_compute_dtype": torch.float16,
+        "bnb_4bit_use_double_quant": True,
+    }
 
-def extract_concerns(input_text: str) -> list[str]:
     model = AutoModelForCausalLM.from_pretrained(
         "microsoft/Phi-3.5-mini-instruct",
-        load_in_8bit=True,
         device_map="auto",
-        torch_dtype="auto",
+        quantization_config=bnb_config,
         trust_remote_code=True,
     )
-    tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3.5-mini-instruct")
 
-    prompt = f"""
-    Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
+    tokenizer = AutoTokenizer.from_pretrained(
+        "microsoft/Phi-3.5-mini-instruct",
+        padding_side="left",
+        pad_token="</s>"
+    )
+
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+
+    messages = [
+        {"role": "system", "content": """
+        Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
     Input: 'I can't sleep well and I feel very low.'
     Output: 'can't sleep well', 'feel very low'
     Input: 'Lately, I've been happy and excited.'
     Output: 'happy and excited'
     Input: 'I am worried that Anil will be the cause of my team's disqualification.'
     Output: 'worried'
-    Input: 'These past few days, I’ve been feeling confused about job prospects.'
+    Input: 'These past few days, I've been feeling confused about job prospects.'
     Output: "confused about job prospects"
 
     DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
-
-    Input: '{input_text}'
-    Output:
-    """
+        """},
+        {"role": "user", "content": input_text},
+    ]
 
     pipe = pipeline(
         "text-generation",
         model=model,
         tokenizer=tokenizer,
+        torch_dtype=torch.float16,
+        device_map="auto",
     )
 
     generation_args = {
-        "max_new_tokens": 50,  # reduced max tokens for shorter output
+        "max_new_tokens": 500,
         "return_full_text": False,
         "temperature": 0.0,
         "do_sample": False,
+        "pad_token_id": tokenizer.pad_token_id,
+        "num_beams": 1,
+        "use_cache": True,
     }
 
-    output = pipe(prompt, **generation_args)
+    with torch.inference_mode():
+        output = pipe(messages, **generation_args)
 
-    output_phrases = output[0]['generated_text'].strip().split('\n')
-    return output_phrases
+    def _clean_output(text: str) -> str:
+        text = text.strip()
+        text = text.strip("'\"")
+        text = text.strip()
+        return text
+
+    raw_outputs = output[0]['generated_text'].strip().split('\n')
+    cleaned_outputs = []
+
+    for line in raw_outputs:
+        line = _clean_output(line)
+        if line:
+            cleaned_outputs.append(line)
+
+    return cleaned_outputs
 
 
 def extract_concerns_inference_API(input_text: str) -> list[str]:
