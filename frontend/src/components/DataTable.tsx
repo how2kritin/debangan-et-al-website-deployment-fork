@@ -2,13 +2,15 @@ import React from 'react';
 import { ApiResponse } from '../api';
 
 interface DataTableProps {
-  data: ApiResponse[];
+  data: { inputText: string; response: ApiResponse }[];
 }
 
 const DataTable: React.FC<DataTableProps> = ({ data }) => (
   <table className="data-table">
     <thead>
       <tr>
+        <th>#</th> {/* Serial number header */}
+        <th>Input</th>
         <th>Polarity</th>
         <th>Features</th>
         <th>Concerns</th>
@@ -19,11 +21,13 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
     <tbody>
       {data.map((item, index) => (
         <tr key={index}>
-          <td>{item.polarity}</td>
-          <td>{item.features}</td>
-          <td>{item.concerns}</td>
-          <td>{item.score}</td>
-          <td>{item.changeInState}</td>
+          <td>{index + 1}</td> {/* Serial number cell */}
+          <td>{item.inputText}</td>
+          <td>{item.response.polarity}</td>
+          <td>{item.response.features}</td>
+          <td>{item.response.concerns}</td>
+          <td>{item.response.score}</td>
+          <td>{item.response.changeInState}</td>
         </tr>
       ))}
     </tbody>
