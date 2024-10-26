@@ -1,0 +1,31 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .input-section {
+    width: 50%;
+  }
+  
+  .chart-section {
+    width: 50%;
+  }
+  
+  .input-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
