@@ -1,31 +1,58 @@
-from transformers import AutoModelForSequenceClassification
+from transformers import AutoModelForSequenceClassification, BitsAndBytesConfig
 from transformers import AutoTokenizer, AutoConfig
 import numpy as np
 from scipy.special import softmax
 import requests
+import torch
+import bitsandbytes as bnb
+
+_MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+_tokenizer = None
+_model = None
+_config = None
+
+
+def _load_model():
+    global _tokenizer, _model, _config
+
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+    )
+
+    if _tokenizer is None:
+        _tokenizer = AutoTokenizer.from_pretrained(_MODEL_NAME)
+        _model = AutoModelForSequenceClassification.from_pretrained(
+            _MODEL_NAME,
+            quantization_config=quantization_config,
+            device_map="auto"
+        )
+        _config = AutoConfig.from_pretrained(_MODEL_NAME)
+        _model.eval()
+
 
 def get_polarity(input_text: str) -> str:
-    def preprocess(text: str) -> str:
-        new_text = []
-        for t in text.split(" "):
-            t = '@user' if t.startswith('@') and len(t) > 1 else t
-            t = 'http' if t.startswith('http') else t
-            new_text.append(t)
-        return " ".join(new_text)
-    MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    config = AutoConfig.from_pretrained(MODEL)
+    if _tokenizer is None:
+        _load_model()
 
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+    if '@' in input_text or 'http' in input_text:
+        text = ' '.join('@user' if word.startswith('@') else
+                        'http' if word.startswith('http') else word
+                        for word in input_text.split())
+    else:
+        text = input_text
 
-    preprocessed_text = preprocess(input_text)
-    encoded_input = tokenizer(preprocessed_text, return_tensors='pt')
-    output = model(**encoded_input)
-    scores = output[0][0].detach().numpy()
-    scores = softmax(scores)
-    ranking = np.argsort(scores)
-    ranking = ranking[::-1]
-    return config.id2label[ranking[0]]
+    inputs = _tokenizer(text, return_tensors='pt', truncation=True, max_length=128)
+    inputs = {k: v.to(_model.device) for k, v in inputs.items()}
+
+    with torch.no_grad():
+        outputs = _model(**inputs)
+        scores = outputs.logits[0].cpu().numpy()
+
+    label_id = np.argmax(softmax(scores))
+    return _config.id2label[label_id]
 
 
 def get_polarity_inference_API(input_text: str) -> str:
