@@ -49,7 +49,7 @@ def update_cur_day_scores(scores_to_add: utils.DateScores) -> utils.DateScores:
 
 
 def calculate_phq_scores(
-    week_scores: List[utils.DateScores], concern_ranges: List[int]
+        week_scores: List[utils.DateScores], concern_ranges: List[int]
 ):
     print(week_scores)
     num_cols = {
@@ -102,7 +102,7 @@ def get_cur_day_concern_labels(scores: list[int]):
 
 
 def _predict_categories(
-    input_text: str, num_cats: int, threshold: float = 0.1
+        input_text: str, num_cats: int, threshold: float = 0.1
 ) -> Dict[str, int]:
     categories = utils.get_categories()
 

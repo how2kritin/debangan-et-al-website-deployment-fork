@@ -99,7 +99,7 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
 
         DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
             """
-    final_prompt = base_prompt+"\n"+input_text
+    final_prompt = base_prompt+"\nInput: "+input_text
     messages = [
         {"role": "user", "content": final_prompt},
     ]
@@ -122,16 +122,16 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
     return phrases
 
 def extract_concerns_handler(input_text: str) -> list[str]:
-    local= False
+    local = False
+
     def is_connected():
         try:
             socket.create_connection(("1.1.1.1", 53))
             print("Connected to Internet")
         except OSError:
             local = True
-            pass
-        print("Not Connected to Internet")
-        local = True
+            print("Not Connected to Internet")
+
     is_connected()
 
     if local:
