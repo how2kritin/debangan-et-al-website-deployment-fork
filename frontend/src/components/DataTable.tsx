@@ -33,8 +33,8 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
               <td rowSpan={item.response.categories.length}>{item.inputText}</td>
               <td rowSpan={item.response.categories.length}>{item.response.polarity}</td>
               <td rowSpan={item.response.categories.length}>{item.response.features.join(', ')}</td>
-              <td>{item.response.categories[0]}</td>
-              <td>{item.response.intensity[0]}</td>
+              <td>{item.response.categories.length ? item.response.categories[0] : ""}</td>
+              <td>{item.response.intensity.length ? item.response.intensity[0] : ""}</td>
             </tr>
             {item.response.categories.slice(1).map((category, catIndex) => (
               <tr key={`${index}-${catIndex}`}>
