@@ -50,7 +50,7 @@ def prompt_inference_local(category, user_prompt):
     bool_array = return_array(return_text)
     return bool_array
 
-local= True
+local= False
 if __name__ == "__main__":
 
     if local:
@@ -87,7 +87,8 @@ if __name__ == "__main__":
         prompt_llm = prompt_llm_inference
 
     user_prompt = "I am feeling anxious, fidgety and restless"
-    arr = prompt_llm("anxiety", user_prompt)
-    print(arr)
-    arr = prompt_llm("depression", user_prompt)
-    print(arr)
+    categories = ['depression', 'anxiety', 'adhd', 'schizophrenia', 'insomnia']
+
+    for category in categories:
+        arr = prompt_llm(category, user_prompt)
+        print(arr)
