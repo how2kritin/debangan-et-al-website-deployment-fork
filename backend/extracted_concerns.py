@@ -3,6 +3,7 @@ import torch
 from typing import List
 import socket
 
+
 def extract_concerns(input_text: str) -> list[str]:
     bnb_config = {
         "load_in_4bit": True,
@@ -19,16 +20,16 @@ def extract_concerns(input_text: str) -> list[str]:
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
-        "microsoft/Phi-3.5-mini-instruct",
-        padding_side="left",
-        pad_token="</s>"
+        "microsoft/Phi-3.5-mini-instruct", padding_side="left", pad_token="</s>"
     )
 
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     messages = [
-        {"role": "system", "content": """
+        {
+            "role": "system",
+            "content": """
         Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
     Input: 'I can't sleep well and I feel very low.'
     Output: 'can't sleep well', 'feel very low'
@@ -40,7 +41,8 @@ def extract_concerns(input_text: str) -> list[str]:
     Output: "confused about job prospects"
 
     DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
-        """},
+        """,
+        },
         {"role": "user", "content": input_text},
     ]
 
@@ -71,7 +73,7 @@ def extract_concerns(input_text: str) -> list[str]:
         text = text.strip()
         return text
 
-    raw_outputs = output[0]['generated_text'].strip().split('\n')
+    raw_outputs = output[0]["generated_text"].strip().split("\n")
     cleaned_outputs = []
 
     for line in raw_outputs:
@@ -87,7 +89,7 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
 
     client = InferenceClient(api_key="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")
     base_prompt = """
-            Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
+        Each of the following sentences have certain phrases which relate to mental health (either positively or negatively). These target phrases must be present in the sentence and relate to emotion, mental state, psychophysical condition, etc. Output only the relevant phrases.
         Input: 'I can't sleep well and I feel very low.'
         Output: 'can't sleep well', 'feel very low'
         Input: 'Lately, I've been happy and excited.'
@@ -96,10 +98,9 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
         Output: 'worried'
         Input: 'These past few days, I’ve been feeling confused about job prospects.'
         Output: "confused about job prospects"
-
-        DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
+        Do not give any explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples. If you feel the inputs are gibberish or do not have any useful phrases, just output "None".
             """
-    final_prompt = base_prompt+"\n"+input_text
+    final_prompt = base_prompt + "\n" + input_text
     messages = [
         {"role": "user", "content": final_prompt},
     ]
@@ -111,18 +112,20 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
         max_tokens=500,
         temperature=1.0,
         top_p=0.8,
-        stream=True
+        stream=True,
     )
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
             stitched_response += chunk.choices[0].delta.content
-    phrases = [phrase.strip().strip("'\"") for phrase in stitched_response.split('\n')]
+    phrases = [phrase.strip().strip("'\"") for phrase in stitched_response.split("\n")]
     phrases = list(dict.fromkeys(phrase for phrase in phrases if phrase))
 
     return phrases
 
+
 def extract_concerns_handler(input_text: str) -> list[str]:
-    local= False
+    local = False
+
     def is_connected():
         try:
             socket.create_connection(("1.1.1.1", 53))
@@ -132,6 +135,7 @@ def extract_concerns_handler(input_text: str) -> list[str]:
             pass
         print("Not Connected to Internet")
         local = True
+
     is_connected()
 
     if local:
@@ -139,6 +143,7 @@ def extract_concerns_handler(input_text: str) -> list[str]:
     else:
         extract_concerns_usage = extract_concerns_inference_API
     return extract_concerns_usage(input_text)
+
 
 if __name__ == "__main__":
     text = "Samyak's mother is worrying him and his father."
