@@ -158,25 +158,22 @@ const App: React.FC = () => {
     }))
   }));
 
-
-
   return (
     <div className="app-container">
       <div className="input-section">
-        <InputForm onSubmit={handleInputSubmit} />
+            <InputForm onSubmit={handleInputSubmit} />
+      </div>
+      <div className="plots-container">
+        <div className="plot">
+          <LineChart dates={dates} plots={firstPlots} />
+        </div>
+        <div className="plot">
+          <LineChart dates={dates} plots={sleepQuality} />
+        </div>
+      </div>
+
+      <div className="data-table-container">
         <DataTable data={data} />
-      </div>
-      <div className="chart-section">
-        <LineChart
-          dates={dates}
-          plots={firstPlots}
-        />
-      </div>
-      <div className="chart-section" id="sleep-quality">
-        <LineChart
-          dates={dates}
-          plots={sleepQuality}
-        />
       </div>
     </div>
   );
