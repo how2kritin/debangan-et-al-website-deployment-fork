@@ -100,7 +100,7 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
         Output: "confused about job prospects"
         Do not give any explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples. If you feel the inputs are gibberish or do not have any useful phrases, just output "None".
             """
-    final_prompt = base_prompt + "\n" + input_text
+    final_prompt = base_prompt+"\nInput: "+input_text
     messages = [
         {"role": "user", "content": final_prompt},
     ]
@@ -132,9 +132,7 @@ def extract_concerns_handler(input_text: str) -> list[str]:
             print("Connected to Internet")
         except OSError:
             local = True
-            pass
-        print("Not Connected to Internet")
-        local = True
+            print("Not Connected to Internet")
 
     is_connected()
 

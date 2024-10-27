@@ -67,20 +67,20 @@ def get_polarity_inference_API(input_text: str) -> str:
 
     output = query(json_payload=payload)
 
-    return output[0]['label']
+    return output[0][0]['label']
 
 
 def get_polarity_handler(input_text: str) -> str:
-    local= False
+    local = False
+
     def is_connected():
         try:
             socket.create_connection(("1.1.1.1", 53))
             print("Connected to Internet")
         except OSError:
             local = True
-            pass
-        print("Not Connected to Internet")
-        local = True
+            print("Not Connected to Internet")
+
     is_connected()
 
     if local:
@@ -92,5 +92,5 @@ def get_polarity_handler(input_text: str) -> str:
 
 if __name__ == "__main__":
     text = "I am depressed."
-    print(get_polarity(text))
+    # print(get_polarity(text))
     print(get_polarity_inference_API(text))

@@ -7,6 +7,7 @@ import random
 DateScores = Tuple[str, Dict[str, List[int]]]
 itr = 0
 
+
 def get_cur_date(change_itr: bool = False) -> str:
     global itr
     now = datetime.datetime.now()
@@ -60,7 +61,7 @@ def read_last_entries(file_path: str, count: int) -> List[DateScores]:
                 entries.append(pickle.load(file))
             except EOFError:
                 break
-    
+
     entries = entries[-count:] if len(entries) >= count else entries
     return entries
 

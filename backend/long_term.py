@@ -3,10 +3,12 @@ import json
 from huggingface_hub import InferenceClient
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
 torch.random.manual_seed(0)
 import socket
 
 client = InferenceClient(api_key="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")
+
 
 def return_array(category, text):
     category_sizes = {'depression': 9, 'anxiety': 7, 'adhd': 6, 'schizophrenia': 7, 'insomnia': 6}
@@ -41,9 +43,9 @@ def prompt_llm_inference(category, user_prompt):
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
             final_output += chunk.choices[0].delta.content
-    print(final_output)
     bool_array = return_array(category, final_output)
     return bool_array
+
 
 def prompt_inference_local(category, user_prompt):
     bnb_config = {
@@ -85,19 +87,20 @@ def prompt_inference_local(category, user_prompt):
     bool_array = return_array(category, return_text)
     return bool_array
 
-local= False
-def is_connected():
-    global local
-    try:
-        socket.create_connection(("1.1.1.1", 53))
-        print("Connected to Internet")
-    except OSError:
-        local = True
-        pass
-    print("Not Connected to Internet")
-    local = True
 
 def return_tbssa_outputs(input_text: str) -> list[list[bool]]:
+    local = False
+
+    def is_connected():
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            print("Connected to Internet")
+        except OSError:
+            local = True
+            print("Not Connected to Internet")
+
+    is_connected()
+
     if local:
         prompt_llm = prompt_inference_local
     else:
