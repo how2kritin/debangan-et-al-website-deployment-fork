@@ -13,7 +13,7 @@ unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 JSONFILE = "./scores.pkl"
 DATE_SCORES_SIZES = [9, 7, 6, 7, 6]
 MAX_SCORES = [27, 21, 18, 21, 18]
-DATE_SCORES_LABELS = ['depression', 'anxiety', 'adhd', 'schizophrenia', 'insomnia']
+DATE_SCORES_LABELS = ["depression", "anxiety", "adhd", "schizophrenia", "insomnia"]
 CONCERN_REANGES = [4, 4, 4, 4, 4]
 
 
@@ -50,7 +50,7 @@ def update_cur_day_scores(scores_to_add: utils.DateScores) -> utils.DateScores:
 
 
 def calculate_phq_scores(
-        week_scores: List[utils.DateScores], concern_ranges: List[int]
+    week_scores: List[utils.DateScores], concern_ranges: List[int]
 ):
     print(week_scores)
     num_cols = {
@@ -68,8 +68,7 @@ def calculate_phq_scores(
     concern_score: Dict[str, int] = {key: 0 for key in num_cols}
     for concern in scores:
         for col in range(num_cols[concern]):
-            concern_score[concern] += math.floor(
-                scores[concern][col] / 2)
+            concern_score[concern] += math.floor(scores[concern][col] / 2)
         concern_score[concern] = 100 * concern_score[concern] / MAX_SCORES[i]
         i += 1
 
@@ -83,9 +82,10 @@ def get_cur_day_phq_scores(input_text: str):
     # TODO: plug in model outputs here when done
     lsts = return_tbssa_outputs(input_text)
     print(lsts)
-    todays_scores: utils.DateScores = (cur_date, {
-        cat: lst for cat, lst in zip(DATE_SCORES_LABELS, lsts)
-    })
+    todays_scores: utils.DateScores = (
+        cur_date,
+        {cat: lst for cat, lst in zip(DATE_SCORES_LABELS, lsts)},
+    )
 
     # update cur date in file
     if utils.is_cur_date_in_file(JSONFILE):
@@ -102,9 +102,7 @@ def get_cur_day_concern_labels(scores: list[int]):
     return [str(key) for key in scores]
 
 
-def _predict_categories(
-        input_text: str, num_cats: int, threshold: float = 0.1
-) -> Dict[str, int]:
+def _predict_categories(input_text: str, num_cats: int) -> Dict[str, int]:
     categories = utils.get_categories()
 
     if len(input_text) < 1:
@@ -116,9 +114,7 @@ def _predict_categories(
     prompt = f"{input_text} I should be diagnosed with [MASK]."
     results = unmask_category(prompt)
     filtered_results = [
-        result
-        for result in results
-        if result["token_str"] in categories and result["score"] >= threshold
+        result for result in results if result["token_str"] in categories
     ]
 
     if len(filtered_results) < 1:
