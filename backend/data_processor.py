@@ -11,9 +11,9 @@ unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 
 # TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
-DATE_SCORES_SIZES = [9, 7]
+DATE_SCORES_SIZES = [9, 7, 6, 7, 6]
 DATE_SCORES_LABELS = ['depression', 'anxiety', 'adhd', 'schizophrenia', 'insomnia']
-CONCERN_REANGES = [4, 4]
+CONCERN_REANGES = [4, 4, 4, 4, 4]
 
 
 def add_scores(a: List[int], b: List[int]):
@@ -23,6 +23,7 @@ def add_scores(a: List[int], b: List[int]):
 def get_cur_day_scores():
     def accumulate_scores(scores_list: List[utils.DateScores]) -> utils.DateScores:
         aggregate: utils.DateScores = scores_list[-1]
+        print(f"lllll: {len(aggregate)}")
 
         for date_score in scores_list[:-1]:
             for key in aggregate[1]:
