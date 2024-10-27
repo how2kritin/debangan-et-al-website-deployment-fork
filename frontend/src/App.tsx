@@ -39,7 +39,7 @@ const maxScores = {
 function getLabel(score: number): string {
   if (score < 0.25) return "None";
   if (score < 0.50) return "Mild";
-  if (score < 0.75) return"Moderate";
+  if (score < 0.75) return "Moderate";
   return "Severe";
 }
 
@@ -47,7 +47,7 @@ function getLabel(score: number): string {
 function getSleepQualityLabel(score: number): string {
   if (score < 0.25) return "Poor";
   if (score < 0.50) return "Moderate";
-  if (score < 0.75) return"Good";
+  if (score < 0.75) return "Good";
   return "Excellent";
 }
 
@@ -56,7 +56,7 @@ function getCurrentDateRecords(apiData: ApiResponse): CategoryOnADateInfo[] {
   const names = apiData.categoryNames;
   const scores = apiData.categoryScores;
   const labels = apiData.categoryLabels;
-  
+
   const dateRecords: CategoryOnADateInfo[] = [];
   for (let i = 0; i < names?.length; i++) {
     const record: CategoryOnADateInfo = {
@@ -64,10 +64,10 @@ function getCurrentDateRecords(apiData: ApiResponse): CategoryOnADateInfo[] {
       score: scores[i],
       label: labels[i],
     }
-    
+
     dateRecords.push(record);
   }
-  
+
   return dateRecords;
 }
 
@@ -81,7 +81,7 @@ function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADate
   const plots: Plot[] = [];
 
   // console.log(numPlots);
-  
+
   // Create a plot for each category
   for (let i = 0; i < numPlots; i++) {
     const plot: Plot = {
@@ -90,18 +90,18 @@ function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADate
     };
 
     // console.log(datesRecords.entries())
-    
+
     // For each date, get the score and label for this category index
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_date, categories] of datesRecords.entries()) {
       plot.category = categories[i].category;
-      
+
       plot.items.push({
         score: categories[i].score,
         label: categories[i].label,
       });
     }
-    
+
     plots.push(plot);
   }
 
@@ -124,11 +124,12 @@ const App: React.FC = () => {
   const [datesRecords, setDatesRecords] = useState<Map<string, CategoryOnADateInfo[]>>(new Map());
   const [sampleDate, setSampleDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [polarities, setPolarities] = useState<number[]>([]);
 
   const handleInputSubmit = async (input: string) => {
     try {
       const apiData = await fetchApiData(input, setIsLoading);
-      setData((prevData) => [...prevData, {inputText: input, response: apiData}]);
+      setData((prevData) => [...prevData, { inputText: input, response: apiData }]);
       // console.log(input);
 
       const curDate: string = apiData.currentDate;
@@ -140,6 +141,19 @@ const App: React.FC = () => {
         ...datesRecords,
         [curDate, curDateRecords]
       ]));
+
+      let polarity = -1;
+      if (apiData.polarity === "positive") polarity = +1;
+      else if (apiData.polarity === "negative") polarity = -1;
+      else polarity = 0;
+
+      setPolarities(() =>
+        [
+          ...polarities,
+          polarity
+        ]
+      );
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -169,38 +183,55 @@ const App: React.FC = () => {
     }))
   }));
 
+  const polarityPlot: Plot = {
+    category: "Polarity",
+    items: polarities.map((value) => ({
+      score: value,
+      label: "",
+    })),
+  };
+  
+
   return (
-  <div className="app-container">
-    {isLoading && <LoadingModal />}
+    <div className="app-container">
+      {isLoading && <LoadingModal />}
 
-    <div className="input-section">
-      <InputForm onSubmit={handleInputSubmit} />
-    </div>
-
-    <div className="plots-container">
-      <div className="plot">
-        <LineChart
-          dates={dates}
-          plots={firstPlots}
-          title="Scores for All Categories Over Time"
-          yLabel="Category Scores"
-        />
+      <div className="input-section">
+        <InputForm onSubmit={handleInputSubmit} />
       </div>
-      <div className="plot">
-        <LineChart
-          dates={dates}
-          plots={sleepQuality}
-          title="Sleep Quality"
-          yLabel="Score"
-        />
+
+      <div className="plots-container">
+        <div className="plot">
+          <LineChart
+            dates={dates}
+            plots={firstPlots}
+            title="Scores for All Categories Over Time"
+            yLabel="Category Scores"
+          />
+        </div>
+        <div className="plot">
+          <LineChart
+            dates={dates}
+            plots={sleepQuality}
+            title="Sleep Quality"
+            yLabel="Score"
+          />
+        </div>
+        <div className="plot">
+          <LineChart
+            dates={dates}
+            plots={[polarityPlot]}
+            title="Polarities"
+            yLabel="Polarity Value"
+          />
+        </div>
+      </div>
+
+      <div className="data-table-container">
+        <DataTable data={data} />
       </div>
     </div>
-
-    <div className="data-table-container">
-      <DataTable data={data} />
-    </div>
-  </div>
-);
+  );
 }
 
 export default App;
