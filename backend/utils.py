@@ -27,35 +27,34 @@ def get_random_date_scores(date_string: str, sizes: List[int], labels: List[str]
     return (date_string, scores_dict)
 
 
-
 def append_to_file(file_path: str, entries: List[DateScores]) -> None:
-    with open(file_path, 'ab') as file:
+    with open(file_path, "ab") as file:
         for entry in entries:
             pickle.dump(entry, file)
 
 
 def replace_last_entry(file_path: str, new_entry: DateScores) -> None:
     entries = []
-    
-    with open(file_path, 'rb') as file:
+
+    with open(file_path, "rb") as file:
         while True:
             try:
                 entries.append(pickle.load(file))
             except EOFError:
                 break
-    
+
     if entries:
         entries[-1] = new_entry
-        
-        with open(file_path, 'wb') as file:
+
+        with open(file_path, "wb") as file:
             for entry in entries:
                 pickle.dump(entry, file)
 
 
 def read_last_entries(file_path: str, count: int) -> List[DateScores]:
     entries = []
-    
-    with open(file_path, 'rb') as file:
+
+    with open(file_path, "rb") as file:
         while True:
             try:
                 entries.append(pickle.load(file))
@@ -74,3 +73,5 @@ def is_cur_date_in_file(file_path: str):
         return False
 
 
+def get_categories():
+    return ["anxiety", "depression", "insomnia", "schizophrenia", "adhd"]

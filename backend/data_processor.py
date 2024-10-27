@@ -2,7 +2,11 @@ import random
 import math
 from typing import List, Dict
 
+from transformers import pipeline
+
 import utils
+
+unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 
 # TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
@@ -34,8 +38,10 @@ def update_cur_day_scores(scores_to_add: utils.DateScores) -> utils.DateScores:
     cur_day_scores = get_cur_day_scores()
 
     for key in cur_day_scores[1]:
-        cur_day_scores[1][key] = add_scores(cur_day_scores[1][key], scores_to_add[1][key])
-    
+        cur_day_scores[1][key] = add_scores(
+            cur_day_scores[1][key], scores_to_add[1][key]
+        )
+
     utils.replace_last_entry(JSONFILE, cur_day_scores)
     return cur_day_scores
 
@@ -56,13 +62,13 @@ def calculate_phq_scores(week_scores: List[utils.DateScores], concern_ranges: Li
         for col in range(num_cols[concern]):
             concern_score[concern] += math.floor(scores[concern][col] * concern_ranges[i] / 7.1)
         i += 1
-    
+
     return concern_score
 
 
 def get_cur_day_phq_scores(input_text: str):
     # TODO: arg unused for now
-    
+
     cur_date = utils.get_cur_date()
     # TODO: plug in model outputs here when done
     todays_scores = utils.get_random_date_scores(cur_date, DATE_SCORES_SIZES, DATE_SCORES_LABELS)
@@ -82,11 +88,40 @@ def get_cur_day_concern_labels(scores: list[int]):
     return [str(key) for key in scores]
     
 
+def _predict_categories(input_text: str, num_cats: int) -> Dict[str, int]:
+    categories = utils.get_categories()
+
+    if len(input_text) < 1:
+        return {}
+
+    if not input_text[-1] == ".":
+        input_text += "."
+
+    prompt = f"{input_text} I should be diagnosed with [MASK]."
+    results = unmask_category(prompt)
+    filtered_results = [
+        result for result in results if result["token_str"] in categories
+    ]
+
+    if len(filtered_results) < 1:
+        return {}
+
+    sorted_results = sorted(filtered_results, key=lambda x: x["score"], reverse=True)
+    if len(sorted_results) > num_cats:
+        sorted_results = sorted_results[:num_cats]
+
+    TOTAL_PROB = sum([result["score"] for result in filtered_results])
+    relative_probs = {
+        res["token_str"]: (res["score"] / TOTAL_PROB) * 10 for res in filtered_results
+    }
+
+    return relative_probs
+
 
 def process_data(input_text: str):
     polarity = random.choice(["positive", "neutral", "negative"])
     features = f"Features of {input_text}"
-    concerns = f"Concerns about {input_text}"
+    categories = _predict_categories(input_text, 3)
     score = round(random.uniform(0, 10), 2)
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
@@ -98,7 +133,7 @@ def process_data(input_text: str):
     return {
         "polarity": polarity,
         "features": features,
-        "concerns": concerns,
+        "categories": categories, # { category : intensity }
         "score": score,
         "currentDate": currentDate,
         "categoryNames": concernNames,
