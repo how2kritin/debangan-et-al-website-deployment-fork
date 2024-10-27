@@ -3,8 +3,8 @@ import axios from 'axios';
 export interface ApiResponse {
   polarity: string;
   features: string[];
-  concerns: string[];
-  score: number;
+  categories: string[];
+  intensity: number;
   changeInState: number;
   currentDate: string;
   categoryNames: string[];

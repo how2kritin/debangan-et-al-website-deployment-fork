@@ -13,8 +13,8 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
         <th>Input</th>
         <th>Polarity</th>
         <th>Features</th>
-        <th>Concerns</th>
-        <th>Score</th>
+        <th>Categories</th>
+        <th>Intensity</th>
         <th>Change in State</th>
       </tr>
     </thead>
@@ -25,8 +25,8 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
           <td>{item.inputText}</td>
           <td>{item.response.polarity}</td>
           <td>{item.response.features}</td>
-          <td>{item.response.concerns}</td>
-          <td>{item.response.score}</td>
+          <td>{item.response.categories}</td>
+          <td>{item.response.intensity}</td>
           <td>{item.response.changeInState}</td>
         </tr>
       ))}

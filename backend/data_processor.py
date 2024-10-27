@@ -115,6 +115,8 @@ def _predict_categories(input_text: str, num_cats: int) -> Dict[str, int]:
         res["token_str"]: (res["score"] / TOTAL_PROB) * 10 for res in filtered_results
     }
 
+    print(relative_probs)
+
     return relative_probs
 
 
@@ -122,7 +124,8 @@ def process_data(input_text: str):
     polarity = random.choice(["positive", "neutral", "negative"])
     features = f"Features of {input_text}"
     categories = _predict_categories(input_text, 3)
-    score = round(random.uniform(0, 10), 2)
+    intensities = list(categories.values())
+    categories = list(categories.keys())
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
@@ -134,7 +137,7 @@ def process_data(input_text: str):
         "polarity": polarity,
         "features": features,
         "categories": categories, # { category : intensity }
-        "score": score,
+        "intensity": intensities,
         "currentDate": currentDate,
         "categoryNames": concernNames,
         "categoryScores": cur_day_phq_scores,
