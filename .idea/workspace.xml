@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="278ea210-40e2-4b2b-a2c8-05ba8853c501" name="Changes" comment="deployment ready">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="278ea210-40e2-4b2b-a2c8-05ba8853c501" name="Changes" comment="deployment ready" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +67,7 @@
       <workItem from="1730019116202" duration="8000" />
       <workItem from="1730019134284" duration="10000" />
       <workItem from="1730019156366" duration="5000" />
-      <workItem from="1730019176148" duration="3666000" />
+      <workItem from="1730019176148" duration="4378000" />
     </task>
     <task id="LOCAL-00001" summary="added my part now samyak please merge :D">
       <option name="closed" value="true" />

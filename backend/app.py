@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from data_processor import process_data
 import os
+from gevent import monkey
+monkey.patch_all()
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +22,14 @@ def process_input():
     response_data = process_data(input_text)
     return jsonify(response_data)
 
+@app.errorhandler(TimeoutError)
+def handle_timeout_error(error):
+    return jsonify({"error": "The request timed out"}), 504
+
+@app.errorhandler(Exception)
+def handle_general_error(error):
+    return jsonify({"error": str(error)}), 500
+
 
 if __name__ == '__main__':
     try:
@@ -27,4 +37,5 @@ if __name__ == '__main__':
         print("Deleted")
     except:
         print("Not deleted")
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
