@@ -108,21 +108,32 @@ function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADate
   return plots;
 }
 
+const LoadingModal = () => {
+  return (
+    <div className="loading-modal-overlay">
+      <div className="loading-modal">
+        <div className="spinner"></div>
+        <p>Loading...</p>
+      </div>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const [data, setData] = useState<TableData[]>([]);
   const [datesRecords, setDatesRecords] = useState<Map<string, CategoryOnADateInfo[]>>(new Map());
   const [sampleDate, setSampleDate] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleInputSubmit = async (input: string) => {
     try {
-      const apiData = await fetchApiData(input);
-      setData((prevData) => [...prevData, { inputText: input, response: apiData }]);
+      const apiData = await fetchApiData(input, setIsLoading);
+      setData((prevData) => [...prevData, {inputText: input, response: apiData}]);
       // console.log(input);
-      
+
       const curDate: string = apiData.currentDate;
       setSampleDate(() => curDate);
-      
+
       const curDateRecords = getCurrentDateRecords(apiData);
       // console.log(curDateRecords)
       setDatesRecords(new Map([
@@ -159,24 +170,37 @@ const App: React.FC = () => {
   }));
 
   return (
-    <div className="app-container">
-      <div className="input-section">
-            <InputForm onSubmit={handleInputSubmit} />
-      </div>
-      <div className="plots-container">
-        <div className="plot">
-          <LineChart dates={dates} plots={firstPlots} title="Scores for All Categories Over Time" yLabel='Category Scores'/>
-        </div>
-        <div className="plot">
-          <LineChart dates={dates} plots={sleepQuality} title="Sleep Quality" yLabel='Score'/>
-        </div>
-      </div>
+  <div className="app-container">
+    {isLoading && <LoadingModal />}
 
-      <div className="data-table-container">
-        <DataTable data={data} />
+    <div className="input-section">
+      <InputForm onSubmit={handleInputSubmit} />
+    </div>
+
+    <div className="plots-container">
+      <div className="plot">
+        <LineChart
+          dates={dates}
+          plots={firstPlots}
+          title="Scores for All Categories Over Time"
+          yLabel="Category Scores"
+        />
+      </div>
+      <div className="plot">
+        <LineChart
+          dates={dates}
+          plots={sleepQuality}
+          title="Sleep Quality"
+          yLabel="Score"
+        />
       </div>
     </div>
-  );
-};
+
+    <div className="data-table-container">
+      <DataTable data={data} />
+    </div>
+  </div>
+);
+}
 
 export default App;

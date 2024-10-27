@@ -9,7 +9,6 @@ from long_term import return_tbssa_outputs
 
 unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 
-# TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
 DATE_SCORES_SIZES = [9, 7, 6, 7, 6]
 MAX_SCORES = [27, 21, 18, 21, 18]
@@ -76,10 +75,7 @@ def calculate_phq_scores(
 
 
 def get_cur_day_phq_scores(input_text: str):
-    # TODO: arg unused for now
-
     cur_date = utils.get_cur_date()
-    # TODO: plug in model outputs here when done
     lsts = return_tbssa_outputs(input_text)
     print(lsts)
     todays_scores: utils.DateScores = (
@@ -98,7 +94,6 @@ def get_cur_day_phq_scores(input_text: str):
 
 
 def get_cur_day_concern_labels(scores: list[int]):
-    # TODO: write actual shite
     return [str(key) for key in scores]
 
 
