@@ -43,6 +43,7 @@ def prompt_llm_inference(category, user_prompt):
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
             final_output += chunk.choices[0].delta.content
+    print(f"HIIIIII {final_output}")
     bool_array = return_array(category, final_output)
     return bool_array
 

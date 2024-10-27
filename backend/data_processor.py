@@ -68,7 +68,7 @@ def calculate_phq_scores(
     concern_score: Dict[str, int] = {key: 0 for key in num_cols}
     for concern in scores:
         for col in range(num_cols[concern]):
-            concern_score[concern] += math.floor(scores[concern][col] / 2)
+            concern_score[concern] += scores[concern][col] / 2
         concern_score[concern] = 100 * concern_score[concern] / MAX_SCORES[i]
         i += 1
 

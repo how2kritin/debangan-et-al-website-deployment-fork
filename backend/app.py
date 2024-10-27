@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from data_processor import process_data
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -21,4 +22,9 @@ def process_input():
 
 
 if __name__ == '__main__':
+    try:
+        print("Deleted")
+        os.remove("./scores.pkl")
+    except:
+        print("Not deleted")
     app.run(debug=True)
