@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="278ea210-40e2-4b2b-a2c8-05ba8853c501" name="Changes" comment="deployment ready">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +69,7 @@
       <workItem from="1730019116202" duration="8000" />
       <workItem from="1730019134284" duration="10000" />
       <workItem from="1730019156366" duration="5000" />
-      <workItem from="1730019176148" duration="2969000" />
+      <workItem from="1730019176148" duration="3666000" />
     </task>
     <task id="LOCAL-00001" summary="added my part now samyak please merge :D">
       <option name="closed" value="true" />
@@ -153,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730020385277</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="deployment ready">
+      <option name="closed" value="true" />
+      <created>1730022302769</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1730022302769</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
