@@ -168,7 +168,7 @@ const App: React.FC = () => {
           <LineChart dates={dates} plots={firstPlots} title="Scores for All Categories Over Time" yLabel='Category Scores'/>
         </div>
         <div className="plot">
-          <LineChart dates={dates} plots={sleepQuality} title="" yLabel='Category Scores'/>
+          <LineChart dates={dates} plots={sleepQuality} title="Sleep Quality" yLabel='Score'/>
         </div>
       </div>
 

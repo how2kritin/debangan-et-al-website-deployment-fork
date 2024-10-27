@@ -56,7 +56,7 @@ const LineChart: React.FC<LineChartProps> = ({ dates, plots, title, yLabel }) =>
       },
       title: {
         display: true,
-        text: Title,
+        text: title,
       },
     },
     scales: {
