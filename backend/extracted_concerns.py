@@ -85,9 +85,7 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
     from huggingface_hub import InferenceClient
 
     client = InferenceClient(api_key="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")
-
-    messages = [
-        {"role": "system", "content": """
+    base_prompt = """
             Extract the mental health phrases present in the following sentences, and the cause of that mental health (if it is present). Here's a few examples.
         Input: 'I can't sleep well and I feel very low.'
         Output: 'can't sleep well', 'feel very low'
@@ -99,8 +97,10 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
         Output: "confused about job prospects"
 
         DO NOT give explanations/causes as to why you are outputting those phrases; simply output the phrases in the same exact format as the above examples.
-            """},
-        {"role": "user", "content": input_text},
+            """
+    final_prompt = base_prompt+"\n"+input_text
+    messages = [
+        {"role": "user", "content": final_prompt},
     ]
 
     stitched_response = ""
@@ -108,13 +108,13 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
         model="microsoft/Phi-3.5-mini-instruct",
         messages=messages,
         max_tokens=500,
+        temperature=1.0,
+        top_p=0.8,
         stream=True
     )
-
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
             stitched_response += chunk.choices[0].delta.content
-
     phrases = [phrase.strip().strip("'\"") for phrase in stitched_response.split('\n')]
     phrases = list(dict.fromkeys(phrase for phrase in phrases if phrase))
 
@@ -122,5 +122,4 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
 
 if __name__ == "__main__":
     text = "Samyak's mother is worrying him and his father."
-    print(extract_concerns(text))
-    # print(extract_concerns_inference_API(text))
+    print(extract_concerns_inference_API(text))
