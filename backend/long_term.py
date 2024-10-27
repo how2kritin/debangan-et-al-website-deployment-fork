@@ -4,6 +4,7 @@ from huggingface_hub import InferenceClient
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 torch.random.manual_seed(0)
+import socket
 
 client = InferenceClient(api_key="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")
 
@@ -78,6 +79,16 @@ def prompt_inference_local(category, user_prompt):
     return bool_array
 
 local= False
+def is_connected():
+    global local
+    try:
+        socket.create_connection(("1.1.1.1", 53))
+        print("Connected to Internet")
+    except OSError:
+        local = True
+        pass
+    print("Not Connected to Internet")
+    local = True
 
 def return_tbssa_outputs(input_text: str) -> list[list[bool]]:
     if local:

@@ -1,6 +1,7 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 from typing import List
+import socket
 
 def extract_concerns(input_text: str) -> list[str]:
     bnb_config = {
@@ -120,9 +121,24 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
 
     return phrases
 
-
 def extract_concerns_handler(input_text: str) -> list[str]:
-    pass
+    local= False
+    def is_connected():
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            print("Connected to Internet")
+        except OSError:
+            local = True
+            pass
+        print("Not Connected to Internet")
+        local = True
+    is_connected()
+
+    if local:
+        extract_concerns_usage = extract_concerns
+    else:
+        extract_concerns_usage = extract_concerns_inference_API
+    return extract_concerns_usage(input_text)
 
 if __name__ == "__main__":
     text = "Samyak's mother is worrying him and his father."

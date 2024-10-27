@@ -5,6 +5,7 @@ from scipy.special import softmax
 import requests
 import torch
 import bitsandbytes as bnb
+import socket
 
 _MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 _tokenizer = None
@@ -70,7 +71,23 @@ def get_polarity_inference_API(input_text: str) -> str:
 
 
 def get_polarity_handler(input_text: str) -> str:
-    pass
+    local= False
+    def is_connected():
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            print("Connected to Internet")
+        except OSError:
+            local = True
+            pass
+        print("Not Connected to Internet")
+        local = True
+    is_connected()
+
+    if local:
+        get_polarity_usage = get_polarity
+    else:
+        get_polarity_usage = get_polarity_inference_API
+    return get_polarity_usage(input_text)
 
 
 if __name__ == "__main__":
