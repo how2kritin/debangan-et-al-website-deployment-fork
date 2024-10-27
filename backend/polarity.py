@@ -60,7 +60,7 @@ def get_polarity_inference_API(input_text: str) -> str:
     while True:
         try:
             API_URL = "https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest"
-            headers = {"Authorization": "Bearer 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"}
+            headers = {"Authorization": "Bearer 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"}
             payload = {"inputs": input_text}
 
             def query(json_payload):

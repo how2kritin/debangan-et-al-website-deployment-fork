@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 torch.random.manual_seed(0)
 import socket
 
-client = InferenceClient(api_key="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")
+client = InferenceClient(api_key="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")
 
 
 def return_array(category, text):

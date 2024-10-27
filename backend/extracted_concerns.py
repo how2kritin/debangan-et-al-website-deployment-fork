@@ -87,7 +87,7 @@ def extract_concerns(input_text: str) -> list[str]:
 def extract_concerns_inference_API(input_text: str) -> list[str]:
     from huggingface_hub import InferenceClient
 
-    client = InferenceClient(api_key="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")
+    client = InferenceClient(api_key="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")
     base_prompt = """
         Each of the following sentences have certain phrases which relate to mental health (either positively or negatively). These target phrases must be present in the sentence and relate to emotion, mental state, psychophysical condition, etc. Output only the relevant phrases.
         Input: 'I can't sleep well and I feel very low.'

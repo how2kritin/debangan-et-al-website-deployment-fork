@@ -69,8 +69,7 @@ def calculate_phq_scores(
     for concern in scores:
         for col in range(num_cols[concern]):
             concern_score[concern] += math.floor(
-                scores[concern][col] * concern_ranges[i] / 7.1
-            )
+                scores[concern][col] / 2)
         concern_score[concern] = 100 * concern_score[concern] / MAX_SCORES[i]
         i += 1
 
@@ -150,6 +149,7 @@ def process_data(input_text: str):
         categories = _predict_categories(input_text, 3)
         intensities = list(categories.values())
         categories = list(categories.keys())
+        print(intensities, categories)
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)
