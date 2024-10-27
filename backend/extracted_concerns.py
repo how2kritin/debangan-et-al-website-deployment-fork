@@ -2,7 +2,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 from typing import List
 
-def extract_concerns(input_text: str) -> List[str]:
+def extract_concerns(input_text: str) -> list[str]:
     bnb_config = {
         "load_in_4bit": True,
         "bnb_4bit_quant_type": "nf4",
@@ -119,6 +119,10 @@ def extract_concerns_inference_API(input_text: str) -> list[str]:
     phrases = list(dict.fromkeys(phrase for phrase in phrases if phrase))
 
     return phrases
+
+
+def extract_concerns_handler(input_text: str) -> list[str]:
+    pass
 
 if __name__ == "__main__":
     text = "Samyak's mother is worrying him and his father."

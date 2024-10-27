@@ -69,6 +69,10 @@ def get_polarity_inference_API(input_text: str) -> str:
     return output[0]['label']
 
 
+def get_polarity_handler(input_text: str) -> str:
+    pass
+
+
 if __name__ == "__main__":
     text = "I am depressed."
     print(get_polarity(text))

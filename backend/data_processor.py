@@ -1,17 +1,18 @@
 import random
 import math
 from typing import List, Dict
-
 from transformers import pipeline
-
 import utils
+from polarity import get_polarity_handler
+from extracted_concerns import extract_concerns_handler
+from long_term import return_tbssa_outputs
 
 unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 
 # TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
 DATE_SCORES_SIZES = [9, 7]
-DATE_SCORES_LABELS = ["Depression", "Anxiety"]
+DATE_SCORES_LABELS = ['depression', 'anxiety', 'adhd', 'schizophrenia', 'insomnia']
 CONCERN_REANGES = [4, 4]
 
 
@@ -77,13 +78,14 @@ def get_cur_day_phq_scores(input_text: str):
 
     cur_date = utils.get_cur_date()
     # TODO: plug in model outputs here when done
-    todays_scores = utils.get_random_date_scores(
-        cur_date, DATE_SCORES_SIZES, DATE_SCORES_LABELS
-    )
+    lsts = return_tbssa_outputs(input_text)
+    todays_scores: utils.DateScores = (cur_date, {
+        cat: lst for cat, lst in zip(DATE_SCORES_LABELS, lsts)
+    })
 
     # update cur date in file
     if utils.is_cur_date_in_file(JSONFILE):
-        todays_scores = update_cur_day_scores(todays_scores)
+        update_cur_day_scores(todays_scores)
     else:
         utils.append_to_file(JSONFILE, [todays_scores])
 
@@ -133,8 +135,8 @@ def _predict_categories(
 
 
 def process_data(input_text: str):
-    polarity = random.choice(["positive", "neutral", "negative"])
-    features = f"Features of {input_text}"
+    polarity = get_polarity_handler(input_text)
+    features = extract_concerns_handler(input_text)
     categories = _predict_categories(input_text, 3)
     intensities = list(categories.values())
     categories = list(categories.keys())
@@ -148,7 +150,7 @@ def process_data(input_text: str):
     return {
         "polarity": polarity,
         "features": features,
-        "categories": categories,  # { category : intensity }
+        "categories": categories,
         "intensity": intensities,
         "currentDate": currentDate,
         "categoryNames": concernNames,
