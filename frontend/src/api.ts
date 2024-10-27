@@ -4,7 +4,7 @@ export interface ApiResponse {
   polarity: string;
   features: string[];
   categories: string[];
-  intensity: number;
+  intensity: number[];
   changeInState: number;
   currentDate: string;
   categoryNames: string[];

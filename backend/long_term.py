@@ -7,13 +7,19 @@ torch.random.manual_seed(0)
 
 client = InferenceClient(api_key="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")
 
-def return_array(text):
+def return_array(category, text):
+    category_sizes = {'depression': 9, 'anxiety': 7, 'adhd': 6, 'schizophrenia': 7, 'insomnia': 6}
+
     match = re.search(r"\[(.*?)\]", text)
     if match:
         boolean_array = [
             item.strip().lower() == "true" for item in match.group(1).split(",")
         ]
         return boolean_array
+    else:
+        boolean_array = [False for _ in range(category_sizes[category])]
+        return boolean_array
+
 
 def prompt_llm_inference(category, user_prompt):
     with open("./prompts.txt", "r") as f:
@@ -34,7 +40,8 @@ def prompt_llm_inference(category, user_prompt):
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
             final_output += chunk.choices[0].delta.content
-    bool_array = return_array(final_output)
+    print(final_output)
+    bool_array = return_array(category, final_output)
     return bool_array
 
 def prompt_inference_local(category, user_prompt):
@@ -74,7 +81,7 @@ def prompt_inference_local(category, user_prompt):
     ]
     output = pipe(messages, **generation_args)
     return_text = output[0]["generated_text"]
-    bool_array = return_array(return_text)
+    bool_array = return_array(category, return_text)
     return bool_array
 
 local= False
