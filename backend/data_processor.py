@@ -50,6 +50,7 @@ def update_cur_day_scores(scores_to_add: utils.DateScores) -> utils.DateScores:
 def calculate_phq_scores(
     week_scores: List[utils.DateScores], concern_ranges: List[int]
 ):
+    print(week_scores)
     num_cols = {
         concern: len(week_scores[0][1][concern]) for concern in week_scores[0][1]
     }
@@ -79,6 +80,7 @@ def get_cur_day_phq_scores(input_text: str):
     cur_date = utils.get_cur_date()
     # TODO: plug in model outputs here when done
     lsts = return_tbssa_outputs(input_text)
+    print(lsts)
     todays_scores: utils.DateScores = (cur_date, {
         cat: lst for cat, lst in zip(DATE_SCORES_LABELS, lsts)
     })
