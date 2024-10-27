@@ -26,6 +26,32 @@ interface CategoryOnADateInfo {
   label: string;
 }
 
+const maxScores = {
+  "depression": 27,
+  "anxiety": 21,
+  "adhd": 18,
+  "schizophrenia": 21,
+  "insomnia": 18,
+  "sleepQuality": 100,
+};
+
+
+function getLabel(score: number): string {
+  if (score < 0.25) return "None";
+  if (score < 0.50) return "Mild";
+  if (score < 0.75) return"Moderate";
+  return "Severe";
+}
+
+
+function getSleepQualityLabel(score: number): string {
+  if (score < 0.25) return "Poor";
+  if (score < 0.50) return "Moderate";
+  if (score < 0.75) return"Good";
+  return "Excellent";
+}
+
+
 function getCurrentDateRecords(apiData: ApiResponse): CategoryOnADateInfo[] {
   const names = apiData.categoryNames;
   const scores = apiData.categoryScores;
@@ -112,8 +138,23 @@ const App: React.FC = () => {
   // console.log(sampleDate)
   const plots = getPlots(sampleDate, datesRecords).map((plot) => ({
     ...plot,
-    items: plot.items.slice(-7),
-  }))
+    items: plot.items.slice(-7).map((value) => ({
+      ...value,
+      label: getLabel(value.score)
+    }))
+  }));
+
+  const sleepQuality = plots.filter((plot) => {
+    return plot.category === "insomnia";
+  }).map((plot) => ({
+    category: "Sleep Quality",
+    items: plot.items.map((value) => ({
+      score: 100 * (1 - value.score / maxScores.insomnia),
+      label: getSleepQualityLabel(100 * (1 - value.score / maxScores.insomnia))
+    }))
+  }));
+
+
 
   return (
     <div className="app-container">
@@ -125,6 +166,12 @@ const App: React.FC = () => {
         <LineChart
           dates={dates}
           plots={plots}
+        />
+      </div>
+      <div className="chart-section" id="sleep-quality">
+        <LineChart
+          dates={dates}
+          plots={sleepQuality}
         />
       </div>
     </div>

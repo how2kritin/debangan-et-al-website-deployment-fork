@@ -28,6 +28,8 @@ const generateColors = (numColors: number): string[] => {
   }
   return colors;
 };
+
+
 const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
   const colors = generateColors(plots.length);
 
@@ -41,6 +43,7 @@ const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
       tension: 0,
     })),
   };
+  // console.log(chartData.datasets[0].data);
 
   const options = {
     responsive: true,
