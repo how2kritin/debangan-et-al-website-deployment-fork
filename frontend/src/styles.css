@@ -1,31 +1,49 @@
 .app-container {
-    display: flex;
-    height: 100vh;
-    padding: 20px;
-    gap: 20px;
-  }
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+.input-section {
+  width: 50%;
+}
+
+.chart-section {
+  width: 50%;
+}
+
+.input-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
   
-  .input-section {
-    width: 50%;
-  }
-  
-  .chart-section {
-    width: 50%;
-  }
-  
-  .input-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .data-table th, .data-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
+.data-table {
+  width: 100%;
+  max-width: 100%; /* Prevent the table from going out of bounds */
+  table-layout: fixed; /* Enforces fixed layout */
+  border-collapse: collapse;
+  overflow-x: auto; /* Allows horizontal scrolling if needed */
+}
+
+.data-table th, .data-table td {
+  word-wrap: break-word;
+  white-space: normal;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+}
