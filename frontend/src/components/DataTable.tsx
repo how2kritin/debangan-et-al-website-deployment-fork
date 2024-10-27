@@ -15,7 +15,6 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
           <th>Polarity</th>
           <th>Features</th>
           <th colSpan={2}>Categories</th>
-          <th>Change in State</th>
         </tr>
         <tr>
           <th></th>
@@ -24,7 +23,6 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
           <th></th>
           <th>Category</th>
           <th>Intensity</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -37,7 +35,6 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => (
               <td rowSpan={item.response.categories.length}>{item.response.features.join(', ')}</td>
               <td>{item.response.categories[0]}</td>
               <td>{item.response.intensity[0]}</td>
-              <td rowSpan={item.response.categories.length}>{item.response.changeInState}</td>
             </tr>
             {item.response.categories.slice(1).map((category, catIndex) => (
               <tr key={`${index}-${catIndex}`}>
