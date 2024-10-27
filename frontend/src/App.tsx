@@ -165,10 +165,10 @@ const App: React.FC = () => {
       </div>
       <div className="plots-container">
         <div className="plot">
-          <LineChart dates={dates} plots={firstPlots} />
+          <LineChart dates={dates} plots={firstPlots} title="Scores for All Categories Over Time" yLabel='Category Scores'/>
         </div>
         <div className="plot">
-          <LineChart dates={dates} plots={sleepQuality} />
+          <LineChart dates={dates} plots={sleepQuality} title="" yLabel='Category Scores'/>
         </div>
       </div>
 

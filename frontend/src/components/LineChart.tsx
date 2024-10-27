@@ -17,6 +17,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 interface LineChartProps {
   dates: string[];
   plots: Plot[];
+  title: string;
+  yLabel: string;
 }
 
 // Utility function to generate unique colors for each plot
@@ -30,7 +32,7 @@ const generateColors = (numColors: number): string[] => {
 };
 
 
-const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
+const LineChart: React.FC<LineChartProps> = ({ dates, plots, title, yLabel }) => {
   const colors = generateColors(plots.length);
 
   const chartData = {
@@ -54,7 +56,7 @@ const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
       },
       title: {
         display: true,
-        text: 'Scores for All Categories Over Time',
+        text: Title,
       },
     },
     scales: {
@@ -67,7 +69,7 @@ const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
       y: {
         title: {
           display: true,
-          text: 'Category Scores',
+          text: yLabel,
         },
       },
     },
