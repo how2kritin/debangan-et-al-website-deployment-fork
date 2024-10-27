@@ -12,6 +12,7 @@ unmask_category = pipeline("fill-mask", model="nlp4good/psych-search")
 # TODO: ADD FOR OTHER CONCERNS
 JSONFILE = "./scores.pkl"
 DATE_SCORES_SIZES = [9, 7, 6, 7, 6]
+MAX_SCORES = [27, 21, 18, 21, 18]
 DATE_SCORES_LABELS = ['depression', 'anxiety', 'adhd', 'schizophrenia', 'insomnia']
 CONCERN_REANGES = [4, 4, 4, 4, 4]
 
@@ -70,6 +71,7 @@ def calculate_phq_scores(
             concern_score[concern] += math.floor(
                 scores[concern][col] * concern_ranges[i] / 7.1
             )
+        concern_score[concern] = 100 * concern_score[concern] / MAX_SCORES[i]
         i += 1
 
     return concern_score

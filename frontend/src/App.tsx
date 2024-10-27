@@ -144,6 +144,10 @@ const App: React.FC = () => {
     }))
   }));
 
+  const firstPlots = plots.filter((plot) => {
+    return plot.category !== "insomnia";
+  });
+
   const sleepQuality = plots.filter((plot) => {
     return plot.category === "insomnia";
   }).map((plot) => ({
@@ -165,7 +169,7 @@ const App: React.FC = () => {
       <div className="chart-section">
         <LineChart
           dates={dates}
-          plots={plots}
+          plots={firstPlots}
         />
       </div>
       <div className="chart-section" id="sleep-quality">

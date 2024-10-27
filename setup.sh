@@ -6,12 +6,13 @@
 # clean up later
 conda create -n deby-website python \
     flask flask_cors tqdm \
+    numpy scipy bitsandbytes \
+    pytorch torchtext pytorch-cuda=12.4 \
+    transformers huggingface_hub \
     -c pytorch -c nvidia -c conda-forge
 
-    # pytorch torchtext pytorch-cuda=12.4 \
     # numpy scipy matplotlib pandas anaconda::scikit-learn nltk \
     # kagglehub \
-    # transformers huggingface_hub \
 
 
 # conda create -n deby-website python
