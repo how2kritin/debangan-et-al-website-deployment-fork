@@ -108,12 +108,12 @@ const App: React.FC = () => {
     }
   };
 
-  const dates = Array.from(datesRecords.keys());
+  const dates = Array.from(datesRecords.keys()).slice(-7);
   // console.log(sampleDate)
-  const plots = getPlots(sampleDate, datesRecords);
-  // console.log("hi");
-  // console.log(dates);
-  // console.log(plots);
+  const plots = getPlots(sampleDate, datesRecords).map((plot) => ({
+    ...plot,
+    items: plot.items.slice(-7),
+  }))
 
   return (
     <div className="app-container">
