@@ -119,6 +119,66 @@ const LoadingModal = () => {
   );
 };
 
+// @ts-ignore
+const Suggestions = ({ data }) => {
+    console.log(data);
+    if (data.length == 0) return <></>;
+    const mental_health_tips = {
+        "anxiety": [
+            "It sounds like you're feeling a bit on edge; taking a few slow, deep breaths might help bring some calm.",
+            "Feeling anxious can be tough—remember, it's okay to take things one small step at a time.",
+            "If you're feeling overwhelmed, grounding exercises like focusing on your surroundings can be really soothing."
+        ],
+        "depression": [
+            "You don't have to go through this alone; talking to someone you trust could help lighten the load.",
+            "Small achievements matter. Even a tiny task completed is a step forward, so give yourself credit.",
+            "Remember, it's okay to take breaks and just rest—healing is a journey, and you're allowed to go at your own pace."
+        ],
+        "insomnia": [
+            "Looks like you're having trouble sleeping—try listening to some lofi tunes before bed to help you relax.",
+            "A warm cup of herbal tea could set the mood for rest; sometimes small routines make a big difference.",
+            "If you're lying awake, maybe try some gentle stretches or reading to help ease your mind before sleep."
+        ],
+        "schizophrenia": [
+            "Remember, you are more than any challenges you face. Staying connected to trusted support can make a big difference.",
+            "Taking time to relax, even in small ways like listening to calming music, could help you feel grounded.",
+            "Keeping a journal of your thoughts might help you understand your feelings better and track positive moments."
+        ],
+        "adhd": [
+            "If staying focused is a challenge, using a timer for short, focused bursts can make tasks feel more manageable.",
+            "Taking regular, short breaks can help reset your mind and keep things from overwhelming.",
+            "Keeping a to-do list might help organize your thoughts—ticking things off as you go can be really satisfying."
+        ]
+    };
+
+    const getRandomTip = (tips: string | any[]) => {
+        const randomIndex = Math.floor(Math.random() * tips.length);
+        return tips[randomIndex];
+    };
+
+    const latest_entry_categories = data[data.length - 1].response.categories;
+    if (latest_entry_categories.length == 0) return <></>;
+
+    const suggestions = latest_entry_categories.map((category: string | number) => ({
+        category: category,
+        tip: getRandomTip(mental_health_tips[category] || [])
+    }));
+
+    return (
+        <div className="suggestions-container">
+            <h2>Helpful Suggestions</h2>
+            <div className="suggestions-grid">
+                {suggestions.map((suggestion, index) => (
+                    <div key={index} className="suggestion-card">
+                        <h3>{suggestion.category}</h3>
+                        <p>{suggestion.tip}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const App: React.FC = () => {
   const [data, setData] = useState<TableData[]>([]);
   const [datesRecords, setDatesRecords] = useState<Map<string, CategoryOnADateInfo[]>>(new Map());
@@ -190,7 +250,7 @@ const App: React.FC = () => {
       label: "",
     })),
   };
-  
+
 
   return (
     <div className="app-container">
@@ -227,11 +287,13 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <div className="data-table-container">
-        <DataTable data={data} />
-      </div>
+    <div className="data-table-container">
+      <DataTable data={data} />
     </div>
-  );
+
+      <Suggestions data={data}/>
+  </div>
+);
 }
 
 export default App;

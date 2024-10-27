@@ -23,8 +23,8 @@ def process_input():
 
 if __name__ == '__main__':
     try:
-        print("Deleted")
         os.remove("./scores.pkl")
+        print("Deleted")
     except:
         print("Not deleted")
     app.run(debug=True)
