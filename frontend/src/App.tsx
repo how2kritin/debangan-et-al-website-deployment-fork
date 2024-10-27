@@ -68,9 +68,7 @@ function getPlots(sample_date: string, datesRecords: Map<string, CategoryOnADate
     // For each date, get the score and label for this category index
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_date, categories] of datesRecords.entries()) {
-      if (i === 0) {
-        plot.category = categories[i].category;
-      }
+      plot.category = categories[i].category;
       
       plot.items.push({
         score: categories[i].score,
@@ -125,7 +123,6 @@ const App: React.FC = () => {
       </div>
       <div className="chart-section">
         <LineChart
-          data={data.map((item) => item.response)}
           dates={dates}
           plots={plots}
         />

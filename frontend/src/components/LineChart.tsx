@@ -10,44 +10,48 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { ApiResponse } from '../api';
 import { Plot } from '../App';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface LineChartProps {
-  data: ApiResponse[];
   dates: string[];
   plots: Plot[];
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data, dates, plots }) => {
+// Utility function to generate unique colors for each plot
+const generateColors = (numColors: number): string[] => {
+  const colors: string[] = [];
+  for (let i = 0; i < numColors; i++) {
+    const hue = (i * 360) / numColors;
+    colors.push(`hsl(${hue}, 70%, 50%)`);
+  }
+  return colors;
+};
+const LineChart: React.FC<LineChartProps> = ({ dates, plots }) => {
+  const colors = generateColors(plots.length);
+
   const chartData = {
     labels: dates,
-    datasets: plots.map((plot) => {
-      return {
-        label: plot.category,
-        data: plot.items.map((item) => item.score),
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0,
-      }
-    }),
-    // datasets: [
-    //   {
-    //     label: 'Category Scores',
-    //     data: data.map((item) => item.changeInState),
-    //     borderColor: 'rgb(75, 192, 192)',
-    //     tension: 0,
-    //   },
-    // ],
+    datasets: plots.map((plot, index) => ({
+      label: plot.category,
+      data: plot.items.map((item) => item.score),
+      borderColor: colors[index],
+      backgroundColor: colors[index],
+      tension: 0,
+    })),
   };
 
   const options = {
     responsive: true,
     plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const, // Display legend at the top
+      },
       title: {
         display: true,
-        text: 'Scores for all Categories Over Time',
+        text: 'Scores for All Categories Over Time',
       },
     },
     scales: {
