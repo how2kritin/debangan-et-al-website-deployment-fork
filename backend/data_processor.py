@@ -142,9 +142,14 @@ def _predict_categories(
 def process_data(input_text: str):
     polarity = get_polarity_handler(input_text)
     features = extract_concerns_handler(input_text)
-    categories = _predict_categories(input_text, 3)
-    intensities = list(categories.values())
-    categories = list(categories.keys())
+
+    if polarity == "positive":
+        intensities = [10]
+        categories = ["positive outlook"]
+    else:
+        categories = _predict_categories(input_text, 3)
+        intensities = list(categories.values())
+        categories = list(categories.keys())
 
     concernNames, cur_day_phq_scores = get_cur_day_phq_scores(input_text)
     cur_day_concern_labels = get_cur_day_concern_labels(cur_day_phq_scores)

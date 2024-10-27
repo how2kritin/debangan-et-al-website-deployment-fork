@@ -57,17 +57,20 @@ def get_polarity(input_text: str) -> str:
 
 
 def get_polarity_inference_API(input_text: str) -> str:
-    API_URL = "https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest"
-    headers = {"Authorization": "Bearer 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"}
-    payload = {"inputs": input_text}
+    while True:
+        try:
+            API_URL = "https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest"
+            headers = {"Authorization": "Bearer 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"}
+            payload = {"inputs": input_text}
 
-    def query(json_payload):
-        response = requests.post(API_URL, headers=headers, json=json_payload)
-        return response.json()
+            def query(json_payload):
+                response = requests.post(API_URL, headers=headers, json=json_payload)
+                return response.json()
 
-    output = query(json_payload=payload)
-
-    return output[0][0]['label']
+            output = query(json_payload=payload)
+            return output[0][0]['label']
+        except:
+            continue
 
 
 def get_polarity_handler(input_text: str) -> str:

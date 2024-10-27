@@ -6,12 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="278ea210-40e2-4b2b-a2c8-05ba8853c501" name="Changes" comment="i am gay">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/data_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/data_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/extracted_concerns.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/extracted_concerns.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/long_term.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/long_term.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/polarity.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/polarity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
